@@ -1,0 +1,159 @@
+---
+title: "Cyclistic"
+author: "Michael Porco"
+date: "2022-10-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Cyclystic Analysis
+
+
+Stakeholder Lily Moreno, director of marketing, and my manager, has tasked me with finding the difference in usage of Cyclistic bikes between annual members, and casual riders.
+
+
+# Ask
+
+How do the annual members and casual riders use bikes differently?
+
+# Prepare
+
+I have downloaded the most recent 12 months of Cyclistic trip data to my computer. This data includes the start and end times of the ride, the day, month, and the year. This data is made available by Motivate International Inc.  https://ride.divvybikes.com/data-license-agreement
+
+# Process
+
+Within Excel, I have created a copy of the original data in csv format.  I saved the original data and kept it in a separate folder. Next, I created two new columns of data in the excel spreadsheet. One for ride length, by comparing start and end times.  And one for the day of the week.
+
+I brought in the data to RStudio for cleaning and manipulation.
+
+
+
+## Importing Data
+
+I installed and loaded the necessary packages.  For this analysis I used tidyverse, janitor, lubridate, and skimr. Then, I load each months data into a data frame.  Within my computer, I have the data files saved in the same directory my code is working in.
+
+```{r loading packages, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(janitor)
+library(lubridate)
+
+
+
+
+
+sep <- read.csv("202109_tripdata.csv")
+oct <- read.csv("202110_tripdata.csv")
+nov <- read.csv("202111_tripdata.csv")
+dec <- read.csv("202112_tripdata.csv")
+jan <- read.csv("202201_tripdata.csv")
+feb <- read.csv("202202_tripdata.csv")
+mar <- read.csv("202203_tripdata.csv")
+apr <- read.csv("202204_tripdata.csv")
+may <- read.csv("202205_tripdata.csv")
+jun <- read.csv("202206_tripdata.csv")
+jul <- read.csv("202207_tripdata.csv")
+aug <- read.csv("202208_tripdata.csv")
+
+
+```
+
+## Cleaning
+
+Next, I make sure that all of the data frames are compatible, with the same number and type of columns. I used glimpse on each data frame to do this.  
+
+
+
+```{r checking data frames}
+glimpse(sep)
+
+```
+
+
+
+After confirming the data frames compatibility, I combined them all into a single data frame.
+
+
+
+
+```{r combining data frames}
+df <- rbind(sep, oct, nov, dec, jan, feb, mar, apr, may, jun, jul, aug)
+```
+
+
+
+
+Now I make sure there are is no NA pieces of the data or anything that has characters which won't be accepted.  I also filter out any ride where the ride length was zero.  This could have been the company checking the systems.
+
+
+
+
+```{r cleaning}
+df <- clean_names(drop_na(filter(df, ride_length != "0:00:00")))
+```
+
+
+# Analyze
+
+## Add Data
+
+I will be using lubridate functions to convert the start, end, and ride length columns to datetime figures.  Some of the ride length times were coming up with NAs, but only a very small percentage that will have no effect on the analysis, so I will drop NAs again.
+
+```{r adding data, warning=FALSE}
+df <- mutate(df, started_at = mdy_hm(started_at))
+df <- mutate(df, ended_at = mdy_hm(ended_at))
+df <- mutate(df, ride_length = period_to_seconds(hms(ride_length)))
+df <- drop_na(df)
+```
+
+## Analysis
+
+
+
+
+I will be using Tableau to analyze the data and to create supporting visualizations.  So here, I will create a new csv file of the cleaned and analyzed data to be used in Tableau.
+
+
+```{r save}
+write.csv(df, "ride_data.csv")
+```
+
+
+
+
+
+
+
+# Share
+
+
+Here is a link to the analysis and visualization on tableau public.
+
+https://public.tableau.com/app/profile/michael.porco/viz/CyclisticAnalysis_16673576046850/Story1
+
+
+https://public.tableau.com/app/profile/michael.porco/viz/CyclisticAnalysismonthly/Story2
+
+
+https://public.tableau.com/app/profile/michael.porco/viz/CyclisticAnalysishourly/Story3
+
+https://public.tableau.com/app/profile/michael.porco/viz/CyclisticAnalysisridelength/Story4
+
+https://public.tableau.com/app/profile/michael.porco/viz/CyclisticAnalysisbiketypes/Story5
+
+
+
+# Act
+
+Based upon my analysis, I would like to give my top three recommendations.
+
+## 1. Let users know when they have used the service enough that the membership would be less expensive.
+
+## 2. Give a discount to the membership in spring so that people who would be riding more in the summer can feel like it is worth it.
+
+## 3. Have different prices for casual riders based on the time of day, just like trains do with peak hours.
+
+
