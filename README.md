@@ -1,7 +1,6 @@
-Cyclistic
-Michael Porco
-2022-10-29
-Cyclystic Analysis
+Cyclystic Analysis, by Michael Porco.
+
+
 Stakeholder Lily Moreno, director of marketing, and my manager, has tasked me with finding the difference in usage of Cyclistic bikes between annual members, and casual riders.
 
 Ask
